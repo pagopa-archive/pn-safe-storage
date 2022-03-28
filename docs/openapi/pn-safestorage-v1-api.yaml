@@ -1,0 +1,201 @@
+openapi: 3.0.1
+info:
+  title: This service store files.
+  description: >-
+    This API are used for ..... FIXME
+  license:
+    name: PN software license
+    url: 'https://www.pn.pagopa.it/LICENSE'
+  version: v1.0
+servers:
+  - url: >-
+      https://api.pn.pagopa.it
+    description: Server url
+tags:
+  - name: cfg
+    description: configurazioni
+  - name: file
+    description: Gestione file 
+paths:
+  '/safe-storage/v1/configurations':
+    get:
+      operationId: getConfigs
+      summary: return lifecycle, signing and timestamping policies for each document type
+      responses:
+        '404':
+            description: Not configured
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Configuration'
+              example:
+                documentsTypes:
+                  - name: PN_NOTIFICATION_ATTACHMENTS
+                    informationClassification: 'HC'
+                    allowedInitialStates: [ 'PRELOADED', 'ATTACHED' ]
+                    digitalSignature: false
+                    timestamped: NONE
+                    statuses:
+                      PRELOADED:
+                        storage: PN_TEMPORARY_DOCUMENT
+                        allowedStateTransitions:
+                          - ATTACHED
+                      ATTACHED:
+                        storage: PN_NOTIFIED_DOCUMENTS
+                        allowedStateTransitions: []
+                  - name: PN_AAR
+                    informationClassification: 'HC'
+                    allowedInitialStates: [ 'SAVED' ]
+                    digitalSignature: false
+                    timestamped: NONE
+                    statuses:
+                      SAVED:
+                        storage: PN_AAR
+                        allowedStateTransitions: []
+                  - name: PN_LEGAL_FACTS
+                    informationClassification: 'HC'
+                    allowedInitialStates: [ 'SAVED' ]
+                    digitalSignature: true
+                    timestamped: 'BASIC'
+                    statuses:
+                      SAVED:
+                        storage: PN_LEGAL_FACTS
+                        allowedStateTransitions: []
+                  - name: PN_EXTERNAL_LEGAL_FACTS
+                    informationClassification: 'HC'
+                    allowedInitialStates: [ 'SAVED' ]
+                    digitalSignature: false
+                    timestamped: NONE
+                    statuses:
+                      SAVED:
+                        storage: PN_LEGAL_FACTS
+                        allowedStateTransitions: []
+                storageConfigurations:
+                  - name: PN_TEMPORARY_DOCUMENT
+                    retentionPeriod: '1d'
+                    frequentAccess: '0d'
+                    infrequentAccess: '1d'
+                    glacier: '0d'
+                  - name: PN_NOTIFIED_DOCUMENTS
+                    retentionPeriod: '120d'
+                    frequentAccess: '0d'
+                    infrequentAccess: '120d'
+                    glacier: '0d'
+                  - name: PN_LEGAL_FACTS
+                    retentionPeriod: '10y'
+                    frequentAccess: '0d'
+                    infrequentAccess: '120d'
+                    glacier: '10y'
+                  - name: PN_AAR
+                    retentionPeriod: '10y'
+                    frequentAccess: '0d'
+                    infrequentAccess: '5d'
+                    glacier: '10y'
+        
+        
+  '/safe-storage/v1/files':
+    post:
+      requestBody:
+        content:
+          '*/*'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+  '/safe-storage/v1/files/{fileId}'
+    get:
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*'
+    post:
+      // per dare i diritti 
+      
+
+
+components:
+  schemas:
+    Configuration: 
+      type: object
+      required: 
+        - documentsTypes
+        - storageConfigurations
+      properties:
+        documentsTypes:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentTypeConfiguration'
+        storageConfigurations:
+          type: array
+          items:
+            $ref: '#/components/schemas/StorageConfiguration'
+    
+    TimePeriod:
+      type: string
+      pattern: '([0-9]+y)?([0-9]+d)?'
+      minLength: 1
+    
+
+    StorageConfiguration:
+      type: object
+      required:
+        - name
+        - retentionPeriod
+        - frequentAccess
+        - infrequentAccess
+        - glacier
+      properties:
+        name:
+          type: string
+        retentionPeriod:
+          $ref: '#/components/schemas/TimePeriod'
+        frequentAccess:
+          $ref: '#/components/schemas/TimePeriod'
+        infrequentAccess:
+          $ref: '#/components/schemas/TimePeriod'
+        glacier:
+          $ref: '#/components/schemas/TimePeriod'
+        
+    
+    DocumentTypeConfiguration:
+      type: object
+      properties:
+        name:
+          type: string
+        informationClassification:
+          $ref: '#/components/schemas/SecurityLevel'
+        digitalSignature:
+          type: boolean
+        timestamped: 
+          type: string
+          enum: [ 'NONE', 'BASIC' ]
+        statuses:
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              storage:
+                type: string
+              allowedStateTransitions:
+                type: array
+                items:
+                  type: string
+        allowedInitialStates:
+          type: array
+          items:
+            type: string
+
+    SecurityLevel:
+      type: string
+      enum: ['C', 'HC']
+      description: >
+          * `C` - Confidential
+          * `HC`- Highly Confidential
+          See [information classification](https://pagopa.atlassian.net/wiki/spaces/EN/pages/357204284/Data+Classification+Handling#Classificazione)
+    
