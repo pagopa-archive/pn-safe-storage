@@ -326,13 +326,6 @@ paths:
     parameters:
       - $ref: '#/components/parameters/fileKey'
       - $ref: '#/components/parameters/clientIdHeader'
-      - name: metadataOnly
-        in: query
-        description: >-
-          se assente o valorizzato _false_ allora la risposta conterrà il campo _download_.
-        required: false
-        schema:
-          type: boolean
     get:
       operationId: getFile
       tags:
@@ -352,6 +345,14 @@ paths:
         pronto verrà comunicato un evento al client che ha invocato la chiamata. Molteplici 
         invocazioni di questa API generano un solo evento per client. <br/>
         Il file rimane hot per ```stayHotTime````.
+      parameters:
+        - name: metadataOnly
+          in: query
+          description: >-
+            se assente o valorizzato _false_ allora la risposta conterrà il campo _download_.
+          required: false
+          schema:
+            type: boolean
       responses:
         '200':
           description: OK
@@ -369,6 +370,8 @@ paths:
                     contentLength: 30438
                     checksum: '91375e9e5a9510087606894437a6a382fa5bc74950f932e2b85a788303cf5ba0'
                     retentionUntil: '2032-04-12T12:32:04.000Z'
+                    documentType: PN_LEGALFACT
+                    documentStatus: SAVED
                     download:
                       url: 'https://presignedurldemo.s3.eu-west-2.amazonaws.com/...'
                 coldFile:
@@ -381,6 +384,8 @@ paths:
                     contentLength: 30438
                     checksum: '91375e9e5a9510087606894437a6a382fa5bc74950f932e2b85a788303cf5ba0'
                     retentionUntil: '2032-04-12T12:32:04.000Z'
+                    documentType: PN_LEGALFACT
+                    documentStatus: SAVED
                     download:
                       retryAfter: 86400
 
