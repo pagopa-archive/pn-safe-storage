@@ -2,7 +2,7 @@ objectKey=$1
 
 curl -v -X GET \
   -H "x-pagopa-safestorage-cx-id: pn-delivery-001" \
-  https://76k5rdz8h5.execute-api.eu-south-1.amazonaws.com/dev/safe-storage/v1/files/$objectKey \
+  https://07ivpqaag5.execute-api.eu-south-1.amazonaws.com/dev/safe-storage/v1/files/$objectKey \
   \
   | tee -a logs.txt > out.txt
 
