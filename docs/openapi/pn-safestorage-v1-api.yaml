@@ -259,63 +259,63 @@ paths:
         '404':
           description: Non trovato. Restituito se il parametro clientId è diverso dal client autenticato
 
-  '/sage-storage/v1/upload-with-presigned-url':
-    put:
-      operationId: uploadFileContent
-      tags:
-        - fileUpload
-      summary: Carica contenuto file
-      description: >- 
-        #### UTILIZZO DEL URL DI UPLOAD, NON VA IMPLEMENTATA COME API. SERVE PER DOCUMENTAZIONE
-          PUT o POST necessaria a caricare il contentuto del file tramite presigned URL. 
-          Il presigned url deve essere utilizzabile una volta sola. <br />
-
-          Al termine di questa invocazione _SafeStorage_ avvierà, se necessario, i processi 
-          di firma digitale e marcatura temporale. In ogni caso, quando il file e i suoi metadati 
-          saranno completi e disponibili sullo storage, verrà notificato un evento al client che
-          ha prenotato il presigned URL utilizzato.
-      parameters:
-        - name: Content-Type
-          in: header
-          schema: 
-            type: string
-        - name: x-amz-meta-secret
-          in: header
-          schema: 
-            type: string
-          description: >- 
-            __discutibile__ Token aggiuntivo per far si che sia necessario intercettare anche gli 
-            header e non solo l'URL.
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              type: string
-              format: binary
-      responses:
-        '200':
-          description: OK
-          headers:
-            x-amz-version-id:
-              schema:
-                type: string
-        '403':
-          description: presigned URL scaduto
-      callbacks:
-        putIntoSqs:
-          'configuredSqsPath':
-            put:
-              summary: Send 'file ready' event to SQS
-              requestBody:
-                content:
-                  application/json:
-                    schema:
-                      $ref: '#/components/schemas/FileCreatedDto'
-              responses:
-                '204':
-                  description: OK
-                '404':
-                  description: SQS queue not found
+#  '/sage-storage/v1/upload-with-presigned-url':
+#    put:
+#      operationId: uploadFileContent
+#      tags:
+#        - fileUpload
+#      summary: Carica contenuto file
+#      description: >-
+#        #### UTILIZZO DEL URL DI UPLOAD, NON VA IMPLEMENTATA COME API. SERVE PER DOCUMENTAZIONE
+#          PUT o POST necessaria a caricare il contentuto del file tramite presigned URL.
+#          Il presigned url deve essere utilizzabile una volta sola. <br />
+#
+#          Al termine di questa invocazione _SafeStorage_ avvierà, se necessario, i processi
+#          di firma digitale e marcatura temporale. In ogni caso, quando il file e i suoi metadati
+#          saranno completi e disponibili sullo storage, verrà notificato un evento al client che
+#          ha prenotato il presigned URL utilizzato.
+#      parameters:
+#        - name: Content-Type
+#          in: header
+#          schema:
+#            type: string
+#        - name: x-amz-meta-secret
+#          in: header
+#          schema:
+#            type: string
+#          description: >-
+#            __discutibile__ Token aggiuntivo per far si che sia necessario intercettare anche gli
+#            header e non solo l'URL.
+#      requestBody:
+#        content:
+#          '*/*':
+#            schema:
+#              type: string
+#              format: binary
+#      responses:
+#        '200':
+#          description: OK
+#          headers:
+#            x-amz-version-id:
+#              schema:
+#                type: string
+#        '403':
+#          description: presigned URL scaduto
+#      callbacks:
+#        putIntoSqs:
+#          'configuredSqsPath':
+#            put:
+#              summary: Send 'file ready' event to SQS
+#              requestBody:
+#                content:
+#                  application/json:
+#                    schema:
+#                      $ref: '#/components/schemas/FileCreatedDto'
+#              responses:
+#                '204':
+#                  description: OK
+#                '404':
+#                  description: SQS queue not found
 
 
   ################################################################################################
