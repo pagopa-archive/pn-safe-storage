@@ -134,7 +134,7 @@ paths:
                     initialStatus: 'SAVED'
                     digitalSignature: false
                     timestamped: NONE
-                    checksum: MD5
+                    checksum: SHA256
                     statuses:
                       SAVED:
                         storage: PN_AAR
@@ -144,7 +144,7 @@ paths:
                     allowedInitialStatus: [ 'SAVED' ]
                     digitalSignature: true
                     timestamped: 'STANDARD'
-                    checksum: MD5
+                    checksum: SHA256
                     statuses:
                       SAVED:
                         storage: PN_LEGAL_FACTS
@@ -154,7 +154,7 @@ paths:
                     initialStatus: 'SAVED'
                     digitalSignature: false
                     timestamped: NONE
-                    checksum: MD5
+                    checksum: SHA256
                     statuses:
                       SAVED:
                         storage: PN_LEGAL_FACTS
@@ -595,7 +595,7 @@ components:
           format: date-time
           description: >-
             data e ora fino a cui il documento sarà garantito all'interno di _SafeStorage_. <br/>
-            Può essere ritardata nel tempo, mai anticipata.
+            Può essere ritardata nel tempo, mai anticipata. Formattata con timezone secondo l'rfc 3339
             
                   
     FileDownloadInfo:
@@ -627,7 +627,7 @@ components:
           format: date-time
           description: >- 
             data e ora fino a cui il documento sarà garantito all'interno di _SafeStorage_. <br/>
-            Può essere ritardata nel tempo, mai anticipata.
+            Può essere ritardata nel tempo, mai anticipata. Formattata con timezone secondo l'rfc 3339
             
     
     UpdateFileMetadataResponse:
