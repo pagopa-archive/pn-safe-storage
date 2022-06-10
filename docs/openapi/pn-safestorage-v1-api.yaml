@@ -212,7 +212,7 @@ paths:
                   value:
                     name: 'pn-delivery-push'
                     canCreate: [ 'PN_AAR', 'PN_LEGAL_FACTS' ]
-                    canRead: [ 'PN_AAR', 'PN_LEGAL_FACTS', 'PN_EXTERNAL_LEGAL_FACTS' ]
+                    canRead: [ 'PN_NOTIFICATION_ATTACHMENTS', 'PN_AAR', 'PN_LEGAL_FACTS', 'PN_EXTERNAL_LEGAL_FACTS' ]
                     signatureInfo: {}
                     destination:
                       sqsUrl: https://sqs.eu-central-1.amazonaws.com/558518206506/pn-delivery-push-document-saved
