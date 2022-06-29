@@ -118,7 +118,9 @@ EOF
    sum=$(cat ${file}| openssl dgst -binary -sha256 | openssl base64 -A)
 
    resp=$(curl -s -H"x-pagopa-safestorage-cx-id: ${cx}" -H"x-checksum: SHA-256" -H"x-checksum-value: ${sum}" -d@${TMPDIR}/signedreq.json -XPOST https://${api_endpoint}/${stage}/safe-storage/v1/files)
-
+   echo "RISPOSTA"
+   echo $resp
+   
    url=$(echo "${resp}" | jq -r '.uploadUrl')
    secret=$(echo "${resp}" | jq -r '.secret')
    key=$(echo "${resp}" | jq -r '.key')
