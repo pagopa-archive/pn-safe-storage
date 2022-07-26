@@ -47,7 +47,7 @@ public class ApiController implements FileUploadApi, FileDownloadApi, FileMetada
 
 
     @PutMapping("/files/{key}")
-    public Mono<ResponseEntity<String>> putFileContent( @PathVariable("key") String key, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<Object>> putFileContent( @PathVariable("key") String key, ServerWebExchange exchange) {
         return svc.putFileContent( key, exchange );
     }
 

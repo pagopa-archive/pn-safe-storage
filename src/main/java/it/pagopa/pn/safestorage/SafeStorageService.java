@@ -25,6 +25,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.Instant;
+import java.util.Collections;
+import java.util.Date;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -98,6 +101,7 @@ public class SafeStorageService {
                         .checksum( sha256Calculator.computeSha256( inStrm ))
                         .contentType(metadata.getContentType())
                         .documentType(metadata.getDocumentType())
+                        .retentionUntil( new Date() )
                         .contentLength( BigDecimal.valueOf( Files.size( file )))
                         .documentStatus(metadata.getStatus())
                         .download(new FileDownloadInfo().url(baseUploadUrl + fileKey));
@@ -142,7 +146,7 @@ public class SafeStorageService {
     }
 
 
-    public Mono<ResponseEntity<String>> putFileContent( String key, ServerWebExchange exchange) {
+    public Mono<ResponseEntity<Object>> putFileContent( String key, ServerWebExchange exchange) {
         Path file = baseDir.resolve( key + ".pdf");
         return exchange.getRequest()
                 .getBody()
@@ -161,7 +165,7 @@ public class SafeStorageService {
                 })
                 .flatMap( ( data ) ->
                     Mono.fromFuture( sendEvent( key ))
-                            .map( str -> ResponseEntity.ok(str) )
+                            .map( str -> ResponseEntity.ok(Collections.singletonMap("result", str)) )
                 );
     }
 
