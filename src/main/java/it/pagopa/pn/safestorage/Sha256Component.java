@@ -1,6 +1,7 @@
 package it.pagopa.pn.safestorage;
 
 import org.springframework.stereotype.Component;
+import org.springframework.util.Base64Utils;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,10 +24,14 @@ public class Sha256Component {
             }
 
             byte[] digest = digester.digest();
-            return bytesToHex( digest );
+            return bytesToBase64( digest );
         } catch (NoSuchAlgorithmException | IOException exc) {
             throw new RuntimeException( exc );
         }
+    }
+
+    private static String bytesToBase64(byte[] hash) {
+        return Base64Utils.encodeToString( hash );
     }
 
     private static String bytesToHex(byte[] hash) {
