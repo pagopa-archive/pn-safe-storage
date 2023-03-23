@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
-    
+
+# Esempio 
+#
+# ./upload_file.sh -a localhost:8080 -f multa.pdf -t PN_LEGAL_FACTS -k ciao  -c pn-delivery-push
+#
+
 set -Eeuo pipefail
 trap cleanup SIGINT SIGTERM ERR EXIT
     
@@ -53,12 +58,13 @@ die() {
 
 parse_params() {
   # default values of variables set from params
-  doc_status="PRELOADED"
+  doc_status=""
   api_endpoint=''
   cx='pn-delivery-001'
   doc_type=''
   file=''
-  stage='dev'
+  stage=''
+  apiKey=''
 
   while :; do
     case "${1-}" in
@@ -70,7 +76,7 @@ parse_params() {
       shift
       ;;
     -p | --stage) 
-      stage="${2-}"
+      stage="${2-}/"
       shift
       ;;
     -s | --doc-status) 
@@ -83,6 +89,10 @@ parse_params() {
       ;;
     -c | --cx) 
       cx="${2-}"
+      shift
+      ;;
+    -k | --api-key) 
+      apiKey="${2-}"
       shift
       ;;
     -t | --doc-type) 
@@ -116,8 +126,10 @@ cat << EOF > ${TMPDIR}/signedreq.json
 EOF
 
    sum=$(cat ${file}| openssl dgst -binary -sha256 | openssl base64 -A)
+  
 
-   resp=$(curl -s -H"x-pagopa-safestorage-cx-id: ${cx}" -H"x-checksum: SHA-256" -H"x-checksum-value: ${sum}" -d@${TMPDIR}/signedreq.json -XPOST https://${api_endpoint}/${stage}/safe-storage/v1/files)
+  
+   resp=$(curl -s -H"x-pagopa-safestorage-cx-id: ${cx}" -H"x-api-key: ${apiKey}" -H"content-type: application/json" -H"x-checksum: SHA-256" -H"x-checksum-value: ${sum}" -d@${TMPDIR}/signedreq.json -XPOST http://${api_endpoint}/${stage}safe-storage/v1/files | tee /dev/tty )
    echo "RISPOSTA"
    echo $resp
    
@@ -152,12 +164,12 @@ echo Key:    ${key}
 echo Uploading files ${file}
 
 
-curl -XPUT \
-     -H"Content-type: application/pdf" \
-     -H"x-amz-checksum-sha256: ${sum}" \
-     --upload-file ${file}  \
-     -H"x-amz-meta-secret: ${secret}" \
-        ${url}
+curl -v -XPUT \
+    -H"Content-type: application/pdf" \
+    -H"x-amz-checksum-sha256: ${sum}" \
+   --upload-file ${file}  \
+    -H"x-amz-meta-secret: ${secret}" \
+       ${url}
 
 
 
