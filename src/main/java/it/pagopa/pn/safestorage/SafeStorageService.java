@@ -132,7 +132,7 @@ public class SafeStorageService {
 
             writeMetadata( metadata, fileKey);
 
-            return new OperationResultCodeResponse().resultCode("OK");
+            return new OperationResultCodeResponse().resultCode("200");
         }
         catch (IOException exc ) {
             throw new RuntimeException( exc );
