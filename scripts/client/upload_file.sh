@@ -2,7 +2,7 @@
 
 # Esempio 
 #
-# ./upload_file.sh -a localhost:8080 -f multa.pdf -t PN_LEGAL_FACTS -k ciao  -c pn-delivery-push
+# ./upload_file.sh -a localhost:8080 -f multa.pdf -t PN_LEGAL_FACTS  -c pn-delivery-push
 #
 
 set -Eeuo pipefail
@@ -128,8 +128,7 @@ EOF
    sum=$(cat ${file}| openssl dgst -binary -sha256 | openssl base64 -A)
   
 
-  
-   resp=$(curl -s -H"x-pagopa-safestorage-cx-id: ${cx}" -H"x-api-key: ${apiKey}" -H"content-type: application/json" -H"x-checksum: SHA-256" -H"x-checksum-value: ${sum}" -d@${TMPDIR}/signedreq.json -XPOST http://${api_endpoint}/${stage}safe-storage/v1/files | tee /dev/tty )
+   resp=$(curl -v -s -H"x-pagopa-safestorage-cx-id: ${cx}" -H"x-api-key: ${apiKey}" -H"content-type: application/json" -H"x-checksum: SHA-256" -H"x-checksum-value: ${sum}" -d@${TMPDIR}/signedreq.json -XPOST http://${api_endpoint}/${stage}safe-storage/v1/files | tee /dev/tty )
    echo "RISPOSTA"
    echo $resp
    
