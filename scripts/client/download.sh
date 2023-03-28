@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 
-
-#!/usr/bin/env bash
+# Esempio 
+#
+# ./download.sh -a localhost:8080 -k <safestorage-key>  -c pn-delivery-push
+#
     
 set -Eeuo pipefail
 trap cleanup SIGINT SIGTERM ERR EXIT
@@ -59,7 +61,7 @@ parse_params() {
   cx='pn-delivery-001'
   doc_type=''
   file=''
-  stage='dev'
+  stage=''
 
   while :; do
     case "${1-}" in
@@ -101,9 +103,9 @@ parse_params() {
 parse_params "$@"
 setup_colors
 
-curl -X GET \
+curl -v  -X GET \
   -H "x-pagopa-safestorage-cx-id: ${cx}" \
-  https://${api_endpoint}/${stage}/safe-storage/v1/files/${doc_key} \
+  http://${api_endpoint}/${stage}safe-storage/v1/files/${doc_key} \
   \
   | tee > ${TMPDIR}/out.txt
 
